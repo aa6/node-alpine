@@ -48,12 +48,14 @@ function getStringStream() {
 
 function parseReadStream(stream, callback) {
     var thisAlpine = this;
-    var stream = byline.createStream(stream);
-    stream.pipe(through2.obj(function(chunk, enc, t2callback) {
+    var lineStream = byline.createStream(stream);
+    var resultStream = through2.obj(function(chunk, enc, t2callback) {
         var data = thisAlpine.parseLine(chunk.toString());
         callback(data);
         t2callback();
-    }))
+    })
+    lineStream.pipe(resultStream)
+    return resultStream
 }
 
 function getLogFormat() {
